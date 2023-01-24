@@ -22,9 +22,8 @@ app.get('/', (req, res, next) => {
 	// console.log('Hello from express');
 	// res.status(200).json({ message: 'simeple / in url ' });
 	// throw new Error('Something went wrong');
-	setTimeout(() => {
-		throw new Error('hello error');
-	}, 1);
+
+	res.json({ message: 'Hello' });
 });
 
 app.use('/api', protect, router);
