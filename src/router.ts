@@ -1,47 +1,71 @@
-import { Router } from "express";
+import { Router } from 'express';
+import { body } from 'express-validator';
+import { createProduct, deleteProduct, getOneProduct, getProducts } from './handlers/product';
+import { createUpdate, deleteUpdate, getOneUpdate, getUpdates, updateUpdate } from './handlers/update';
+import { handleInputErrors } from './modules/middleware';
 
 const router = Router();
 /**
  * Product
  */
-router.get("/product", (req, res) => {
-	res.json({ message: "product" });
-});
+router.get('/product', getProducts);
 
-router.get("/product/:id", (req, res) => {});
+router.get('/product/:id', getOneProduct);
 
-router.post("/product", (req, res) => {});
+router.put('/product/:id', body('name').isString(), handleInputErrors, (req, res) => {});
 
-router.put("/product/:id", (req, res) => {});
+router.post('/product', body('name').isString(), handleInputErrors, createProduct);
 
-router.delete("/product/:id", (req, res) => {});
+router.delete('/product/:id', deleteProduct);
 
 /**
  * Update
  */
 
-router.get("/update", (req, res) => {});
+router.get('/update', getUpdates);
 
-router.get("/update/:id", (req, res) => {});
+router.get('/update/:id', getOneUpdate);
 
-router.post("/update", (req, res) => {});
+router.put(
+	'/update/:id',
+	body('title').optional(),
+	body('body').optional(),
+	body('status').isIn(['IN_PROGRESS', 'SHIPPED', 'DEPRECATED']).optional(),
+	body('version').optional(),
+	updateUpdate
+);
+router.post(
+	'/update',
+	body('title').exists().isString(),
+	body('body').exists().isString(),
+	body('productId').exists().isString(),
+	createUpdate
+);
 
-router.put("/update/:id", (req, res) => {});
-
-router.delete("/update/:id", (req, res) => {});
+router.delete('/update/:id', deleteUpdate);
 
 /**
  * UpdatePoint
  */
 
-router.get("/updatepoint", (req, res) => {});
+router.get('/updatepoint', (req, res) => {});
 
-router.get("/updatepoint/:id", (req, res) => {});
+router.get('/updatepoint/:id', (req, res) => {});
 
-router.post("/updatepoint", (req, res) => {});
+router.put('/updatepoint/:id', body('name').optional().isString(), body('description').optional().isString(), () => {});
 
-router.put("/updatepoint/:id", (req, res) => {});
+router.post(
+	'/updatepoint',
+	body('name').isString(),
+	body('description').optional().isString(),
+	body('updatedId').exists().isString(),
+	() => {}
+);
 
-router.delete("/updatepoint/:id", (req, res) => {});
+router.delete('/updatepoint/:id', (req, res) => {});
+router.use((err, req, res, next) => {
+	console.error(err);
+	res.status(500).json({ error: 'in router handler err' });
+});
 
 export default router;
