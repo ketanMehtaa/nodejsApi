@@ -1,2 +1,4 @@
 node_modules
+# keep environment variable out of git
 .env
+dist
